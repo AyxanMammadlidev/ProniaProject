@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProniaProject.DAL;
 
@@ -11,9 +12,11 @@ using ProniaProject.DAL;
 namespace ProniaProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241121175913_CreateProductandCategoryandImagesTable")]
+    partial class CreateProductandCategoryandImagesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,7 +45,7 @@ namespace ProniaProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("ProniaProject.Models.Product", b =>
@@ -81,7 +84,7 @@ namespace ProniaProject.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("ProniaProject.Models.ProductImage", b =>
@@ -112,7 +115,7 @@ namespace ProniaProject.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductImages", (string)null);
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("ProniaProject.Models.Slider", b =>
@@ -150,7 +153,7 @@ namespace ProniaProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Slides", (string)null);
+                    b.ToTable("Slides");
                 });
 
             modelBuilder.Entity("ProniaProject.Models.Product", b =>
