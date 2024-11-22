@@ -3,7 +3,7 @@ using ProniaProject.DAL;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer("server=LAPTOP-04DP7Q7I\\SQLEXPRESS;database=ProniaDB;trusted_connection=true; integrated security=true;TrustServerCertificate=true"));
+builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 var app = builder.Build();
 app.UseStaticFiles();
 
