@@ -8,7 +8,7 @@ namespace ProniaProject.Conrollers
 {
     public class HomeController : Controller
     {
-        public readonly AppDbContext _context;
+        private readonly AppDbContext _context;
         public HomeController(AppDbContext context) {
             _context = context;
         }
@@ -19,7 +19,8 @@ namespace ProniaProject.Conrollers
             HomeVM homeVM = new HomeVM
             {
                 Sliders = _context.Slides.OrderBy(s=>s.Order).ToList(),
-                Products = _context.Products.Include(p=>p.Images).ToList()
+                Products = _context.Products.Include(p=>p.Images.Where(p=>p.IsPrime != null)).Take(8).ToList()
+
             };
 
           return View(homeVM);
