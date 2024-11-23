@@ -22,13 +22,16 @@ namespace ProniaProject.Conrollers
         {
             if (id == null || id < 1) return BadRequest();
 
-            Product product = _context.Products.Include(p=>p.Images).Include(p=>p.Category).FirstOrDefault(p => p.Id == id);
+            Product? product = _context.Products.
+                Include(p=>p.Images.OrderByDescending(pi=>pi.IsPrime))
+                .Include(p=>p.Category).FirstOrDefault(p => p.Id == id);
             if (product == null) return NotFound();
 
             DetailVM detailVM = new DetailVM
             {
                 Product = product,
-                RelatedProducts = _context.Products.Where(p=> p.CategoryId == product.CategoryId && p.Id != id).ToList(),
+                RelatedProducts = _context.Products.Where(p=> p.CategoryId == product.CategoryId && p.Id != id).Include(p=>p.Images.Where(pi=>pi.IsPrime != null))
+                .ToList(),
 
             };
             return View(detailVM);
