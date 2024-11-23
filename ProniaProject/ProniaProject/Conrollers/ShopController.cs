@@ -18,20 +18,20 @@ namespace ProniaProject.Conrollers
             return View();
         }
 
-        public IActionResult Details(int? id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null || id < 1) return BadRequest();
 
-            Product? product = _context.Products.
+            Product? product = await _context.Products.
                 Include(p=>p.Images.OrderByDescending(pi=>pi.IsPrime))
-                .Include(p=>p.Category).FirstOrDefault(p => p.Id == id);
+                .Include(p=>p.Category).FirstOrDefaultAsync(p => p.Id == id);
             if (product == null) return NotFound();
 
             DetailVM detailVM = new DetailVM
             {
                 Product = product,
-                RelatedProducts = _context.Products.Where(p=> p.CategoryId == product.CategoryId && p.Id != id).Include(p=>p.Images.Where(pi=>pi.IsPrime != null))
-                .ToList(),
+                RelatedProducts = await _context.Products.Where(p=> p.CategoryId == product.CategoryId && p.Id != id).Include(p=>p.Images.Where(pi=>pi.IsPrime != null))
+                .ToListAsync(),
 
             };
             return View(detailVM);

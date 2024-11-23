@@ -13,13 +13,13 @@ namespace ProniaProject.Conrollers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
 
             HomeVM homeVM = new HomeVM
             {
-                Sliders = _context.Slides.OrderBy(s=>s.Order).ToList(),
-                Products = _context.Products.Include(p=>p.Images.Where(p=>p.IsPrime != null)).Take(8).ToList()
+                Sliders = await _context.Slides.OrderBy(s=>s.Order).Take(2).ToListAsync(),
+                Products = await _context.Products.Include(p=>p.Images.Where(p=>p.IsPrime != null)).Take(8).ToListAsync()
 
             };
 
