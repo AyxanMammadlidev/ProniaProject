@@ -7,6 +7,7 @@ builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Conf
 var app = builder.Build();
 app.UseStaticFiles();
 
+app.MapControllerRoute("admin", "{area:exists}/{controller=home}/{action=index}/{id?}");
 app.MapControllerRoute("default", "{controller=home}/{action=index}/{id?}");
 
 
