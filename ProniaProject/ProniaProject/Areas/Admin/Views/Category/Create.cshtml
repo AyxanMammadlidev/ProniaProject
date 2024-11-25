@@ -1,0 +1,22 @@
+﻿@model Category
+
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Create Category</h4>
+
+
+                <form asp-action="Create" asp-controller="Category" method="post" class="forms-sample">
+                    <div class="form-group">
+                        <label for="exampleInputName1">Name</label>
+                        <input name="name" asp-for="Name" class="form-control"  placeholder="Name" />
+                    </div>
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                    <button type="submit" class="btn btn-primary me-2">Submit</button>
+                    <button type="button" class="btn btn-light">Cancel</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
