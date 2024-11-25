@@ -87,7 +87,7 @@ namespace ProniaProject.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || id < 1) return BadRequest();
