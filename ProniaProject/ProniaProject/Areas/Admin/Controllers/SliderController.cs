@@ -17,7 +17,7 @@ namespace ProniaProject.Areas.Admin.Controllers
         public async Task<IActionResult> Index()
         {
             List<Slider> sliders = await _context.Slides.ToListAsync();
-            return View();
+            return View(sliders);
         }
     }
 }
