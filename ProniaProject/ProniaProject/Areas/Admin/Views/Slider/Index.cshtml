@@ -1,0 +1,64 @@
+﻿@model List<Slider>
+@{
+    int count = 0;
+}
+<div class="row">
+
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">      <a asp-controller="Category" asp-action="Create" class="card-title">Create Category</a></h4>
+                <a class="btn btn-success">Create Slider</a>
+
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+
+                                </th>
+                                <th>
+                                    Product
+                                </th>
+                                <th>
+                                    Count
+                                </th>
+                                <th>
+
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (Slider slider in Model)
+                            {
+                                count++;
+                                <tr>
+                                    <td>
+                                        @count
+                                    </td>
+                                    <td>
+                                        <img src="~/assets/images/website-images/@slider.Image">
+                                    </td>
+                                    <td>
+                                        <p>@slider.Title</p>
+                                    </td>
+                                    <td>
+                                        <p>@slider.Order</p>
+                                    </td>
+                                    <td>
+                                        <a asp-action="update" asp-route-id="@slider.Id" class="btn btn-warning"><i class="mdi mdi-grease-pencil"></i></a>
+                                        <a asp-action=delete class="btn btn-danger" asp-route-id="@slider.Id"><i class="mdi mdi-delete"></i></a>
+                                        <a asp-action=update class="btn btn-primary"><i class="mdi mdi-information"></i></a>
+                                    </td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
