@@ -19,5 +19,19 @@ namespace ProniaProject.Areas.Admin.Controllers
             List<Slider> sliders = await _context.Slides.ToListAsync();
             return View(sliders);
         }
+
+
+        public async Task<IActionResult> Create(Slider slider)
+        {
+
+            if (!ModelState.IsValid) return View();
+
+            await _context.Slides.AddAsync(slider);
+          await _context.SaveChangesAsync();
+
+          return RedirectToAction(nameof(Index));
+
+        }
     }
+
 }

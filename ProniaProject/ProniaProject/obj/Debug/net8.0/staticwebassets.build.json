@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "qEY0z3MjQLiZsvO9HmFLlqD5YCz/gkCYWtDwpmiLe5c=",
+  "Hash": "SUdwVAe6TGHTv6RsmvK9c8pAKrG9JYaztQG6DZluKqk=",
   "Source": "ProniaProject",
   "BasePath": "_content/ProniaProject",
   "Mode": "Default",
@@ -4613,6 +4613,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\dark.png"
+    },
+    {
+      "Identity": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\assets\\images\\website-images\\download.jpg",
+      "SourceId": "ProniaProject",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\",
+      "BasePath": "_content/ProniaProject",
+      "RelativePath": "assets/images/website-images/download.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\download.jpg"
     },
     {
       "Identity": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\assets\\images\\website-images\\quotation.png",
