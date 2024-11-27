@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProniaProject.Utils.Enums;
+using System.IO;
 
 namespace ProniaProject.Utils
 {
@@ -29,7 +30,7 @@ namespace ProniaProject.Utils
             return false;
         }
 
-        public async static Task CreateFileAsync(this IFormFile file, params string[] roots)
+        public async static Task<string> CreateFileAsync(this IFormFile file, params string[] roots)
         {
             string originalFileName = file.FileName;
             int lastDotIndex = originalFileName.LastIndexOf('.');
@@ -42,7 +43,7 @@ namespace ProniaProject.Utils
             {
                 path = Path.Combine(path, roots[i]);
             }
-            Path.Combine(path, fileName);
+           path = Path.Combine(path, fileName);
 
             using (FileStream fileStream = new FileStream(path, FileMode.Create))
             {
@@ -50,8 +51,25 @@ namespace ProniaProject.Utils
                 await file.CopyToAsync(fileStream);
             }
 
+            return fileName;
+
             
 
         }
+
+        public static void DeleteImage(this string fileName, params string[] roots)
+        {
+            string path = string.Empty;
+
+            for (int i = 0; i < roots.Length; i++)
+            {
+                path = Path.Combine(path, roots[i]);
+            }
+
+            path = Path.Combine(path, fileName);
+
+            File.Delete(path);
+        }
+
     }
 }

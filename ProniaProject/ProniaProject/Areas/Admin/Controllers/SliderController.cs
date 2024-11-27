@@ -54,13 +54,31 @@ namespace ProniaProject.Areas.Admin.Controllers
 
             await slide.Photo.CopyToAsync(fileStream);
             fileStream.Close();
-            slide.Image = fileName;
+            slide.Image = await slide.Photo.CreateFileAsync(_env.WebRootPath,"assets","images","website-images");
 
             await _context.Slides.AddAsync(slide);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if(id == null || id<1) return BadRequest();
+
+            Slider slide = await _context.Slides.FirstOrDefaultAsync(s => s.Id == id);
+
+            if(slide == null) return NotFound();
+
+            slide.Image.DeleteImage(_env.WebRootPath,"assets","images","website-images");
+
+            _context.Slides.Remove(slide);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
+        }
     }
 
 }
+
