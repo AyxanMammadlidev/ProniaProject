@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 
 namespace ProniaProject.Models
 {
@@ -10,7 +11,10 @@ namespace ProniaProject.Models
         public string Desc { get; set; }
         public string Image { get; set; }
         public int Order { get; set; }
-     
+
+        [NotMapped]
+        public IFormFile Photo { get; set; }
+
 
 
     }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProniaProject.DAL;
 using ProniaProject.Models;
+using ProniaProject.Utils;
 
 namespace ProniaProject.Areas.Admin.Controllers
 {
@@ -9,28 +10,56 @@ namespace ProniaProject.Areas.Admin.Controllers
     public class SliderController : Controller
     {
         private readonly AppDbContext _context;
+        private IWebHostEnvironment _env;
 
-        public SliderController(AppDbContext context)
+        public SliderController(AppDbContext context, IWebHostEnvironment env)
         {
              _context = context;
+             _env = env;
         }
         public async Task<IActionResult> Index()
         {
             List<Slider> sliders = await _context.Slides.ToListAsync();
             return View(sliders);
         }
-
-
-        public async Task<IActionResult> Create(Slider slider)
+        public IActionResult Create()
         {
+            return View();
+        }
 
-            if (!ModelState.IsValid) return View();
+        [HttpPost]
+        public async Task<IActionResult> Create(Slider slide)
+        {
+            //if (!ModelState.IsValid) return View();
 
-            await _context.Slides.AddAsync(slider);
-          await _context.SaveChangesAsync();
+            if (!slide.Photo.ValidateType("image/"))
+            {
+                ModelState.AddModelError("Photo", "File type is incorrect");
+                return View();
+            }
+            if (!slide.Photo.ValidateSize(Utils.Enums.FileSize.Mb, 2))
+            {
+                ModelState.AddModelError("Photo", "File size must be less than 2 mb");
+                return View();
+            }
 
-          return RedirectToAction(nameof(Index));
+            string originalFileName = slide.Photo.FileName;
+            int lastDotIndex = originalFileName.LastIndexOf('.');
+            string fileExtension = originalFileName.Substring(lastDotIndex);
 
+            string fileName = string.Concat(Guid.NewGuid().ToString(), fileExtension);
+            string path = Path.Combine(_env.WebRootPath,"assets", "images", "website-images", fileName );
+
+            FileStream fileStream = new FileStream(path, FileMode.Create);
+
+            await slide.Photo.CopyToAsync(fileStream);
+            fileStream.Close();
+            slide.Image = fileName;
+
+            await _context.Slides.AddAsync(slide);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 
