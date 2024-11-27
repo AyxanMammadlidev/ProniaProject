@@ -6,6 +6,22 @@ namespace ProniaProject.Utils
 {
     public static class FileValidator
     {
+         
+
+        public static string BuildPath(string fileName, params string[] roots)
+        {
+            string path = string.Empty;
+
+            for (int i = 0; i < roots.Length; i++)
+            {
+                path = Path.Combine(path, roots[i]);
+            }
+
+            path = Path.Combine(path, fileName);
+            return path;
+        }
+
+
         public static bool ValidateType(this IFormFile file, string type)
         {
             if(file.ContentType.Contains(type))
@@ -37,13 +53,9 @@ namespace ProniaProject.Utils
             string fileExtension = originalFileName.Substring(lastDotIndex);
 
             string fileName = string.Concat(Guid.NewGuid().ToString(), fileExtension);
-            string path = string.Empty;
+            
 
-            for(int i=0; i<roots.Length; i++)
-            {
-                path = Path.Combine(path, roots[i]);
-            }
-           path = Path.Combine(path, fileName);
+          string path = BuildPath(fileName, roots);
 
             using (FileStream fileStream = new FileStream(path, FileMode.Create))
             {
@@ -59,14 +71,9 @@ namespace ProniaProject.Utils
 
         public static void DeleteImage(this string fileName, params string[] roots)
         {
-            string path = string.Empty;
+           
 
-            for (int i = 0; i < roots.Length; i++)
-            {
-                path = Path.Combine(path, roots[i]);
-            }
-
-            path = Path.Combine(path, fileName);
+          string path = BuildPath(fileName, roots);
 
             File.Delete(path);
         }
