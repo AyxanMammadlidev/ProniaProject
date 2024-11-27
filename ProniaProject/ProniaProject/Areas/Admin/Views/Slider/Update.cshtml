@@ -9,7 +9,7 @@
                 <form class="forms-sample" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <img src="~/assets/images/website-images/@Model.Image" alt="Alternate Text" />
-
+                         <input asp-for="Image" class="form-control" type="hidden">
                     </div>
                     <div class="form-group">
                         <label asp-for="Photo">Photo</label>

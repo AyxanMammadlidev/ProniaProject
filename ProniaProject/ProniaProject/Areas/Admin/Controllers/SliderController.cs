@@ -19,11 +19,13 @@ namespace ProniaProject.Areas.Admin.Controllers
              _context = context;
              _env = env;
         }
+
         public async Task<IActionResult> Index()
         {
             List<Slider> sliders = await _context.Slides.ToListAsync();
             return View(sliders);
         }
+
         public IActionResult Create()
         {
             return View();
@@ -64,27 +66,67 @@ namespace ProniaProject.Areas.Admin.Controllers
 
 
 
-        public async Task<IActionResult> Update(int? id, UpdateSliderVM slider)
+        public async Task<IActionResult> Update(int? id)
         {
-            if (id == null || id < 1) return BadRequest();
+            if (id is null || id < 1) return BadRequest();
 
-            Slider slide = await _context.Slides.FirstOrDefaultAsync(s => s.Id == id);
+            Slider slider = await _context.Slides.FirstOrDefaultAsync(s => s.Id == id);
+            if (slider is null) return NotFound();
 
-            if (slide == null) return NotFound();
-
-            Slider sliderVM = new()
+            
+            UpdateSliderVM updateSliderVM = new UpdateSliderVM
             {
-                Title = slide.Title,
-                Subtitle = slide.Subtitle,
-                Desc = slide.Desc,
-                Order = slide.Order,
-                Image = slide.Image
+                Title = slider.Title,
+                Subtitle = slider.Subtitle,
+                Desc = slider.Desc,
+                Order = slider.Order,
+                Image = slider.Image
             };
 
-            return View(sliderVM);
-
+            return View(updateSliderVM);
         }
 
+
+
+        [HttpPost]
+        public async Task<IActionResult> Update(int? id, UpdateSliderVM slideVM)
+        {
+            
+            if(!ModelState.IsValid) return View(slideVM);
+
+            Slider slider = await _context.Slides.FirstOrDefaultAsync(s => s.Id == id);
+            if (slider == null) return BadRequest();
+            if (slideVM.Photo != null)
+            {
+                if (!slideVM.Photo.ValidateType("image/"))
+                {
+                    ModelState.AddModelError(nameof(UpdateSliderVM.Photo),"type is incorrect");
+                    return View(slideVM);
+                }
+                if (!slideVM.Photo.ValidateSize(Utils.Enums.FileSize.Mb, 2))
+                {
+                    ModelState.AddModelError(nameof(UpdateSliderVM.Photo), "size is incorrect");
+                    return View(slideVM);
+                }
+
+                string fileName = await slideVM.Photo.CreateFileAsync(_env.WebRootPath,"assets","images","web-images");
+
+            slider.Image.DeleteImage(_env.WebRootPath, "assets", "images", "web-images");
+                slideVM.Image = fileName;
+            }
+
+            slider.Title = slideVM.Title;
+            slider.Subtitle = slideVM.Subtitle;
+            slider.Desc = slideVM.Desc;
+            slider.Order = slideVM.Order;
+            slider.IsDeleted = false;
+            slider.CreatedAt = DateTime.Now;
+
+            await _context.SaveChangesAsync();  
+            return RedirectToAction(nameof(Index));
+
+
+        }
 
 
         public async Task<IActionResult> Delete(int? id)
