@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Update.Internal;
+using ProniaProject.Areas.Admin.ViewModels;
 using ProniaProject.DAL;
 using ProniaProject.Models;
 using ProniaProject.Utils;
@@ -28,39 +30,62 @@ namespace ProniaProject.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Slider slide)
+        public async Task<IActionResult> Create(CreateSliderVM sliderVM)
         {
             //if (!ModelState.IsValid) return View();
 
-            if (!slide.Photo.ValidateType("image/"))
+            if (!sliderVM.Photo.ValidateType("image/"))
             {
                 ModelState.AddModelError("Photo", "File type is incorrect");
                 return View();
             }
-            if (!slide.Photo.ValidateSize(Utils.Enums.FileSize.Mb, 2))
+            if (!sliderVM.Photo.ValidateSize(Utils.Enums.FileSize.Mb, 2))
             {
                 ModelState.AddModelError("Photo", "File size must be less than 2 mb");
                 return View();
             }
 
-            string originalFileName = slide.Photo.FileName;
-            int lastDotIndex = originalFileName.LastIndexOf('.');
-            string fileExtension = originalFileName.Substring(lastDotIndex);
-
-            string fileName = string.Concat(Guid.NewGuid().ToString(), fileExtension);
-            string path = Path.Combine(_env.WebRootPath,"assets", "images", "website-images", fileName );
-
-            FileStream fileStream = new FileStream(path, FileMode.Create);
-
-            await slide.Photo.CopyToAsync(fileStream);
-            fileStream.Close();
-            slide.Image = await slide.Photo.CreateFileAsync(_env.WebRootPath,"assets","images","website-images");
+            Slider slide = new()
+            {
+                Title = sliderVM.Title,
+                Subtitle = sliderVM.Subtitle,
+                Desc = sliderVM.Description,
+                Order = sliderVM.Order,
+                Image = await sliderVM.Photo.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images"),
+                IsDeleted = false,
+                CreatedAt = DateTime.Now,
+            };
 
             await _context.Slides.AddAsync(slide);
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }
+
+
+
+        public async Task<IActionResult> Update(int? id, UpdateSliderVM slider)
+        {
+            if (id == null || id < 1) return BadRequest();
+
+            Slider slide = await _context.Slides.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (slide == null) return NotFound();
+
+            Slider sliderVM = new()
+            {
+                Title = slide.Title,
+                Subtitle = slide.Subtitle,
+                Desc = slide.Desc,
+                Order = slide.Order,
+                Image = slide.Image
+            };
+
+            return View(sliderVM);
+
+        }
+
+
 
         public async Task<IActionResult> Delete(int? id)
         {

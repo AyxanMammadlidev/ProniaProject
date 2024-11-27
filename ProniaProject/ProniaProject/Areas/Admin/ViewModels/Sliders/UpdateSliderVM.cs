@@ -1,20 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
+﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ProniaProject.Models
+namespace ProniaProject.Areas.Admin.ViewModels
 {
-    public class Slider : BaseEntity
+    public class UpdateSliderVM 
     {
         public int Id { get; set; }
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string Desc { get; set; }
-        public string Image { get; set; }
+        public string? Image { get; set; }
         public int Order { get; set; }
 
-
-
-
+        public IFormFile? Photo { get; set; }
 
     }
 }
