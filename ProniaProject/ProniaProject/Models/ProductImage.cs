@@ -2,7 +2,7 @@
 {
     public class ProductImage : BaseEntity
     {
-        public int Id { get; set; }
+
         public string Image { get; set; }
         public bool? IsPrime { get; set; }
 

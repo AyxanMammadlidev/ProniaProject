@@ -6,11 +6,12 @@ namespace ProniaProject.Utils
 {
     public static class FileValidator
     {
-        static string path = string.Empty;
+
 
         public static string BuildPath(string fileName, params string[] roots)
         {
             
+            string path = string.Empty;
 
             for (int i = 0; i < roots.Length; i++)
             {
@@ -55,7 +56,7 @@ namespace ProniaProject.Utils
             string fileName = string.Concat(Guid.NewGuid().ToString(), fileExtension);
             
 
-            path = BuildPath(fileName, roots);
+           string path = BuildPath(fileName, roots);
 
             using (FileStream fileStream = new FileStream(path, FileMode.Create))
             {
@@ -73,7 +74,7 @@ namespace ProniaProject.Utils
         {
            
 
-            path = BuildPath(fileName, roots);
+          string path = BuildPath(fileName, roots);
 
             File.Delete(path);
         }

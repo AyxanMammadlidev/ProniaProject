@@ -5,7 +5,7 @@ namespace ProniaProject.Models
 {
     public class Slider : BaseEntity
     {
-        public int Id { get; set; }
+
         public string Title { get; set; }
         public string Subtitle { get; set; }
         public string Desc { get; set; }
