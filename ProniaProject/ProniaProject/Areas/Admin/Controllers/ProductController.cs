@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProniaProject.Areas.Admin.ViewModels;
 using ProniaProject.DAL;
 using ProniaProject.Models;
+using ProniaProject.Utils;
 
 namespace ProniaProject.Areas.Admin.Controllers
 {
@@ -47,6 +48,7 @@ namespace ProniaProject.Areas.Admin.Controllers
             return View(productVM);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> Create(CreateProductVM productVM)
         {
@@ -55,6 +57,30 @@ namespace ProniaProject.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
+                return View(productVM);
+            }
+
+            if (!productVM.MainPhoto.ValidateType("image/"))
+            {
+                ModelState.AddModelError(nameof(productVM.MainPhoto),"Photo Type is invalid");
+                return View(productVM);
+            }
+
+            if (!productVM.MainPhoto.ValidateSize(Utils.Enums.FileSize.Mb, 1))
+            {
+                ModelState.AddModelError(nameof(productVM.MainPhoto), "Photo size is invalid");
+                return View(productVM);
+            }
+
+            if (!productVM.HoverPhoto.ValidateType("image/"))
+            {
+                ModelState.AddModelError(nameof(productVM.HoverPhoto), "Photo Type is invalid");
+                return View(productVM);
+            }
+
+            if (!productVM.HoverPhoto.ValidateSize(Utils.Enums.FileSize.Mb, 1))
+            {
+                ModelState.AddModelError(nameof(productVM.HoverPhoto), "Photo size is invalid");
                 return View(productVM);
             }
 
@@ -81,6 +107,23 @@ namespace ProniaProject.Areas.Admin.Controllers
                 return View(productVM);
             }
 
+            ProductImage mainImage = new()
+            {
+                Image = await productVM.MainPhoto.CreateFileAsync(_env.WebRootPath,"assets","images","website-images"),
+                IsPrime = true,
+                CreatedAt = DateTime.Now,
+                IsDeleted = false
+
+            };
+
+            ProductImage hoverImage = new()
+            {
+                Image = await productVM.HoverPhoto.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images"),
+                IsPrime = false,
+                CreatedAt = DateTime.Now,
+                IsDeleted = false
+            };
+
             Product product = new()
             {
                 Name = productVM.Name,
@@ -90,7 +133,8 @@ namespace ProniaProject.Areas.Admin.Controllers
                 Description = productVM.Description,
                 CreatedAt = DateTime.Now,
                 IsDeleted = false,
-                ProductTags = productVM.TagIds.Select(tId => new ProductTag { TagId = tId }).ToList()
+                ProductTags = productVM.TagIds.Select(tId => new ProductTag { TagId = tId }).ToList(),
+                Images = new List<ProductImage> { mainImage, hoverImage }
             };
 
             await _context.Products.AddAsync(product);
@@ -98,6 +142,8 @@ namespace ProniaProject.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
 
         public async Task<IActionResult> Update(int? id)
         {

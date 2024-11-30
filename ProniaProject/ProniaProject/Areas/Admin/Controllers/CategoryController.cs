@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProniaProject.Areas.Admin.ViewModels;
 using ProniaProject.DAL;
 using ProniaProject.Models;
 
@@ -17,11 +18,16 @@ namespace ProniaProject.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<Category> categories = await _context.Categories
+          List<GetCategoryAdminVM> categoriesVM = await _context.Categories
                 .Where(c => !c.IsDeleted)
                 .Include(c => c.Products)
+                .Select(c=>new GetCategoryAdminVM {
+                 Id = c.Id,
+                 Name =  c.Name,
+                 ProductCount = c.Products.Count 
+                })
                 .ToListAsync();
-            return View(categories);
+            return View(categoriesVM);
         }
 
         public IActionResult Create()

@@ -4,6 +4,9 @@ namespace ProniaProject.Areas.Admin.ViewModels
 {
     public class CreateProductVM
     {
+        public IFormFile MainPhoto { get; set; }
+        public IFormFile HoverPhoto { get; set; }
+        public List<IFormFile>? AdditionalPhotos { get; set; }
         public int Id { get; set; }
         public decimal Price { get; set; }
         public string Name { get; set; }
