@@ -68,6 +68,11 @@ namespace ProniaProject.Areas.Admin.Controllers
                 return View(productVM);
             }
 
+            if(productVM.TagIds is null)
+            {
+                productVM.TagIds = new List<int>();
+            }
+
             bool tagResult = productVM.TagIds.Any(tId => !productVM.Tags.Exists(t => t.Id == tId));
 
             if (tagResult)
@@ -98,11 +103,10 @@ namespace ProniaProject.Areas.Admin.Controllers
         {
             if (id == null || id < 1) return BadRequest();
 
-            Product product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            Product product = await _context.Products.Include(p=>p.ProductTags).FirstOrDefaultAsync(p => p.Id == id);
 
             if (product is null) return NotFound();
 
-            Product existed = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
 
             UpdateProductVM productVM = new()
             {
@@ -111,7 +115,10 @@ namespace ProniaProject.Areas.Admin.Controllers
                 CategoryId = product.CategoryId,
                 Price = product.Price,
                 Description = product.Description,
-                Categories = await _context.Categories.ToListAsync()
+                Categories = await _context.Categories.ToListAsync(),
+                Tags = await _context.Tags.ToListAsync(),
+                TagIds = product.ProductTags.Select(pt=>pt.TagId).ToList()
+                
             };
 
             return View(productVM);
