@@ -9,8 +9,8 @@
         public string SKU { get; set; }
         //relational
         public int CategoryId { get; set; }
-        public Category Category { get; set; }
-        public List<ProductImage> Images { get; set; }
+        public Category? Category { get; set; }
+        public List<ProductImage>? Images { get; set; }
         public List<ProductTag> ProductTags { get; set; }
 
     }
