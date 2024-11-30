@@ -186,7 +186,10 @@
                             <span class="title">Tags :</span>
                             <ul>
                                 <li>
-                                    <a href="#">Furniture</a>
+                                    @foreach(ProductTag productTag in Model.Product.ProductTags)
+                                    {
+                                        <a href="#">@productTag.Tag.Name</a>
+                                    }
                                 </li>
                             </ul>
                         </div>
@@ -459,10 +462,10 @@
                                     <div class="product-img">
                                         <a href="single-product-variable.html">
                                             <img class="primary-img"
-                                                 src="~/assets/images/website-images/@product.Images.FirstOrDefault(pi=>pi.IsPrime==true).Image"
+                                                 src="~/assets/images/website-images/@product.Images.FirstOrDefault(pi=>pi.IsPrime==true)?.Image"
                                                  alt="Product Images" />
                                             <img class="secondary-img"
-                                                 src="~/assets/images/website-images/@product.Images.FirstOrDefault(pi=>pi.IsPrime==false).Image"
+                                                 src="~/assets/images/website-images/@product.Images.FirstOrDefault(pi=>pi.IsPrime==false)?.Image"
                                                  alt="Product Images" />
                                         </a>
                                         <div class="product-add-action">

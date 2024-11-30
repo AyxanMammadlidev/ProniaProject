@@ -24,7 +24,9 @@ namespace ProniaProject.Conrollers
 
             Product? product = await _context.Products.
                 Include(p=>p.Images.OrderByDescending(pi=>pi.IsPrime))
-                .Include(p=>p.Category).FirstOrDefaultAsync(p => p.Id == id);
+                .Include(p=>p.Category).Include(p=>p.ProductTags).
+                ThenInclude(pt=>pt.Tag).FirstOrDefaultAsync(p => p.Id == id);
+
             if (product == null) return NotFound();
 
             DetailVM detailVM = new DetailVM
