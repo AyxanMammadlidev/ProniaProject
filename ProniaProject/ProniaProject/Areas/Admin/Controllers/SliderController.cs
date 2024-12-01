@@ -34,7 +34,7 @@ namespace ProniaProject.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateSliderVM sliderVM)
         {
-            //if (!ModelState.IsValid) return View();
+            if (!ModelState.IsValid) return View();
 
             if (!sliderVM.Photo.ValidateType("image/"))
             {
