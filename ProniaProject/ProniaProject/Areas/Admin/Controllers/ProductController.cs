@@ -21,7 +21,7 @@ namespace ProniaProject.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            List<GetProductAdminVM> productsVM = await _context.Products.Include(p => p.Category).Include(p=>p.ColorProducts).Include(p => p.Images.Where(pi => pi.IsPrime == true)).
+            List<GetProductAdminVM> productsVM = await _context.Products.Include(p => p.Category).Include(p => p.Images.Where(pi => pi.IsPrime == true)).
                   Select(
                      p => new GetProductAdminVM
                      {
@@ -30,6 +30,7 @@ namespace ProniaProject.Areas.Admin.Controllers
                          CategoryName = p.Category.Name,
                          Price = p.Price,
                          Image = p.Images[0].Image,
+
 
                      }
                   )
@@ -44,7 +45,7 @@ namespace ProniaProject.Areas.Admin.Controllers
             {
                 Tags = await _context.Tags.ToListAsync(),
                 Categories = await _context.Categories.ToListAsync(),
-                Colors = await _context.Color.ToListAsync(),
+                Colors = await _context.Color.ToListAsync()
                 
 
             };
@@ -59,6 +60,8 @@ namespace ProniaProject.Areas.Admin.Controllers
             productVM.Categories = await _context.Categories.ToListAsync();
             productVM.Tags = await _context.Tags.ToListAsync();
             productVM.Colors = await _context.Color.ToListAsync();
+           
+            
 
             if (!ModelState.IsValid)
             {
@@ -114,17 +117,16 @@ namespace ProniaProject.Areas.Admin.Controllers
             }
 
 
-            if (productVM.ColorIds is null)
-            {
-                productVM.ColorIds = new List<int>();
-            }
 
-            bool colorResult = productVM.ColorIds.Any(cId => !productVM.Colors.Exists(c => c.Id == cId));
-
-            if (colorResult)
+            if (productVM.Colors is not null)
             {
-                ModelState.AddModelError(nameof(CreateProductVM.ColorIds), "not exists");
-                return View(productVM);
+                bool colorResult = productVM.ColorIds.Any(cId => !productVM.Colors.Exists(c => c.Id == cId));
+
+                if (colorResult)
+                {
+                    ModelState.AddModelError(nameof(CreateProductVM.ColorIds), "Colors are wrong");
+                    return View(productVM);
+                }
             }
 
 
@@ -156,8 +158,13 @@ namespace ProniaProject.Areas.Admin.Controllers
                 IsDeleted = false,
                 ProductTags = productVM.TagIds.Select(tId => new ProductTag { TagId = tId }).ToList(),
                 Images = new List<ProductImage> { mainImage, hoverImage },
-                ColorProducts = productVM.ColorIds.Select(cId=> new ColorProduct { ColorId = cId }).ToList()
+
             };
+
+            if (productVM.ColorIds is not null)
+            {
+                product.ColorProducts = productVM.ColorIds.Select(cId => new ColorProduct { ColorId = cId }).ToList();
+            }
 
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
@@ -187,7 +194,7 @@ namespace ProniaProject.Areas.Admin.Controllers
                 Tags = await _context.Tags.ToListAsync(),
                 TagIds = product.ProductTags.Select(pt => pt.TagId).ToList(),
                 Colors = await _context.Color.ToListAsync(),
-                ColorIds =  product.ColorProducts.Select(cp=>cp.ColorId).ToList()
+
 
             };
 
