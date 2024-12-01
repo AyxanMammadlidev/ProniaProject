@@ -21,7 +21,7 @@ namespace ProniaProject.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            List<GetProductAdminVM> productsVM = await _context.Products.Include(p => p.Category).Include(p => p.Images.Where(pi => pi.IsPrime == true)).
+            List<GetProductAdminVM> productsVM = await _context.Products.Include(p => p.Category).Include(p=>p.ColorProducts).Include(p => p.Images.Where(pi => pi.IsPrime == true)).
                   Select(
                      p => new GetProductAdminVM
                      {
@@ -30,8 +30,6 @@ namespace ProniaProject.Areas.Admin.Controllers
                          CategoryName = p.Category.Name,
                          Price = p.Price,
                          Image = p.Images[0].Image,
-                         
-                         
 
                      }
                   )
@@ -46,7 +44,8 @@ namespace ProniaProject.Areas.Admin.Controllers
             {
                 Tags = await _context.Tags.ToListAsync(),
                 Categories = await _context.Categories.ToListAsync(),
-                Colors = await _context.Color.ToListAsync()
+                Colors = await _context.Color.ToListAsync(),
+                
 
             };
 
