@@ -13,6 +13,8 @@ namespace ProniaProject.DAL
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<ProductTag> ProductTags { get; set; }
+        public DbSet<Color> Color { get; set; }
+        public DbSet<ColorProduct> ColorProducts { get; set; }
 
 
 
