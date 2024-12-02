@@ -185,32 +185,35 @@ namespace ProniaProject.Areas.Admin.Controllers
                 product.ProductSizes = productVM.SizeIds.Select(sId => new ProductSize { SizeId = sId }).ToList();
             }
 
-            string text = string.Empty;
-            foreach (IFormFile addPhoto in productVM.AdditionalPhotos)
+            if(productVM.AdditionalPhotos is not null)
             {
-                if (!addPhoto.ValidateType("image/"))
+                string text = string.Empty;
+                foreach (IFormFile addPhoto in productVM.AdditionalPhotos)
                 {
-                    text += $"<div class=\"alert alert-warning\" role=\"alert\">\r\n  {addPhoto.FileName} is not valid type\r\n</div>";
-                    continue;
+                    if (!addPhoto.ValidateType("image/"))
+                    {
+                        text += $"<div class=\"alert alert-warning\" role=\"alert\">\r\n  {addPhoto.FileName} is not valid type\r\n</div>";
+                        continue;
+                    }
+
+                    if (!addPhoto.ValidateSize(Utils.Enums.FileSize.Mb, 1))
+                    {
+                        text += $"<div class=\"alert alert-warning\" role=\"alert\">\r\n  {addPhoto.FileName} is not valid size\r\n</div>";
+                        continue;
+                    }
+
+                    product.Images.Add(new ProductImage
+                    {
+                        Image = await addPhoto.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images"),
+                        CreatedAt = DateTime.Now,
+                        IsDeleted = false,
+                        IsPrime = null
+
+                    });
+
                 }
-
-                if (!addPhoto.ValidateSize(Utils.Enums.FileSize.Mb, 1))
-                {
-                    text += $"<div class=\"alert alert-warning\" role=\"alert\">\r\n  {addPhoto.FileName} is not valid size\r\n</div>";
-                    continue;
-                }
-
-                product.Images.Add(new ProductImage
-                {
-                    Image = await addPhoto.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images"),
-                    CreatedAt = DateTime.Now,
-                    IsDeleted = false,
-                    IsPrime = null
-
-                });
-               
+                TempData["FileWarning"] = text;
             }
-            TempData["FileWarning"] = text;
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
 
@@ -223,7 +226,7 @@ namespace ProniaProject.Areas.Admin.Controllers
         {
             if (id == null || id < 1) return BadRequest();
 
-            Product product = await _context.Products.Include(p => p.ProductTags).Include(p => p.ColorProducts).ThenInclude(cp => cp.Color).FirstOrDefaultAsync(p => p.Id == id);
+            Product product = await _context.Products.Include(p => p.ProductTags).Include(p=>p.Images).Include(p => p.ColorProducts).ThenInclude(cp => cp.Color).FirstOrDefaultAsync(p => p.Id == id);
 
             if (product is null) return NotFound();
 
@@ -239,6 +242,7 @@ namespace ProniaProject.Areas.Admin.Controllers
                 Tags = await _context.Tags.ToListAsync(),
                 TagIds = product.ProductTags.Select(pt => pt.TagId).ToList(),
                 Colors = await _context.Color.ToListAsync(),
+                Images = product.Images
 
 
             };
@@ -258,6 +262,38 @@ namespace ProniaProject.Areas.Admin.Controllers
             }
 
             Product existed = await _context.Products.Include(p => p.ProductTags).FirstOrDefaultAsync(p => p.Id == id);
+
+            if (productVM.MainPhoto is not null)
+            {
+                if (!productVM.MainPhoto.ValidateType("image/"))
+                {
+                    ModelState.AddModelError(nameof(productVM.MainPhoto), "Photo Type is invalid");
+                    return View(productVM);
+                }
+
+                if (!productVM.MainPhoto.ValidateSize(Utils.Enums.FileSize.Mb, 1))
+                {
+                    ModelState.AddModelError(nameof(productVM.MainPhoto), "Photo size is invalid");
+                    return View(productVM);
+                }
+
+            }
+
+            if (productVM.HoverPhoto is not null) {
+                if (!productVM.HoverPhoto.ValidateType("image/"))
+                {
+                    ModelState.AddModelError(nameof(productVM.HoverPhoto), "Photo Type is invalid");
+                    return View(productVM);
+                }
+
+                if (!productVM.HoverPhoto.ValidateSize(Utils.Enums.FileSize.Mb, 1))
+                {
+                    ModelState.AddModelError(nameof(productVM.HoverPhoto), "Photo size is invalid");
+                    return View(productVM);
+                }
+
+
+            }
 
             if (existed.CategoryId != productVM.CategoryId)
             {
@@ -296,6 +332,35 @@ namespace ProniaProject.Areas.Admin.Controllers
          .Select(tId => new ProductTag { TagId = tId, ProductId = existed.Id })
          .ToList());
 
+            if(productVM.MainPhoto is not null)
+            {
+                string fileName = await productVM.MainPhoto.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images");
+                ProductImage mainImg =  existed.Images.FirstOrDefault(p=>p.IsPrime == true);
+                mainImg.Image.DeleteImage(_env.WebRootPath, "assets", "images", "website-images");
+                existed.Images.Remove(mainImg);
+                existed.Images.Add(new ProductImage
+                {
+                    Image = fileName,
+                    CreatedAt = DateTime.Now,
+                    IsDeleted = false,
+                    IsPrime = true
+                });
+            }
+
+            if (productVM.HoverPhoto is not null)
+            {
+                string fileName = await productVM.MainPhoto.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images");
+                ProductImage hoverImg = existed.Images.FirstOrDefault(p => p.IsPrime == true);
+                hoverImg.Image.DeleteImage(_env.WebRootPath, "assets", "images", "website-images");
+                existed.Images.Remove(hoverImg);
+                existed.Images.Add(new ProductImage
+                {
+                    Image = fileName,
+                    CreatedAt = DateTime.Now,
+                    IsDeleted = false,
+                    IsPrime = false
+                });
+            }
 
 
             existed.CategoryId = productVM.CategoryId.Value;

@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "0NEAnHe3aYbp+vqqPE8ILBlz1lkZ8S42OjYJ34GkMd8=",
+  "Hash": "+GRRh5GPcC+hbNwnzCjbinC94SHZttav8s/nOAFlKxU=",
   "Source": "ProniaProject",
   "BasePath": "_content/ProniaProject",
   "Mode": "Default",
@@ -4919,6 +4919,25 @@
       "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\632d91b9-b1a4-4738-b883-a7d37b398509.webp"
     },
     {
+      "Identity": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\assets\\images\\website-images\\6a71e8db-a819-440b-a780-ba079598565f.png",
+      "SourceId": "ProniaProject",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\",
+      "BasePath": "_content/ProniaProject",
+      "RelativePath": "assets/images/website-images/6a71e8db-a819-440b-a780-ba079598565f.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\6a71e8db-a819-440b-a780-ba079598565f.png"
+    },
+    {
       "Identity": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\assets\\images\\website-images\\6aba9885-f6ec-4bf8-bc28-c9fc8104e862.webp",
       "SourceId": "ProniaProject",
       "SourceType": "Discovered",
@@ -5012,6 +5031,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\883f330b-1219-4942-a383-5e200d6c7787.webp"
+    },
+    {
+      "Identity": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\assets\\images\\website-images\\9b990ed3-9f9e-4581-af51-e4001e521b2d.jpg",
+      "SourceId": "ProniaProject",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\",
+      "BasePath": "_content/ProniaProject",
+      "RelativePath": "assets/images/website-images/9b990ed3-9f9e-4581-af51-e4001e521b2d.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\assets\\images\\website-images\\9b990ed3-9f9e-4581-af51-e4001e521b2d.jpg"
     },
     {
       "Identity": "C:\\Users\\pc\\OneDrive\\Masaüstü\\ProniaProject\\ProniaProject\\ProniaProject\\wwwroot\\assets\\images\\website-images\\9dcf04de-9402-4c22-ab1d-1cc889c8629b.png",
