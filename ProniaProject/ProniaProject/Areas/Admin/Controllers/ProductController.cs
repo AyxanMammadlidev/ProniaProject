@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProniaProject.Areas.Admin.ViewModels;
 using ProniaProject.DAL;
@@ -21,7 +22,7 @@ namespace ProniaProject.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            List<GetProductAdminVM> productsVM = await _context.Products.Include(p => p.Category).Include(p=>p.ColorProducts).ThenInclude(pi=>pi.Color).Include(p => p.Images.Where(pi => pi.IsPrime == true)).
+            List<GetProductAdminVM> productsVM = await _context.Products.Include(p => p.Category).Include(p => p.ColorProducts).ThenInclude(pi => pi.Color).Include(p => p.Images.Where(pi => pi.IsPrime == true)).
                   Select(
                      p => new GetProductAdminVM
                      {
@@ -61,8 +62,8 @@ namespace ProniaProject.Areas.Admin.Controllers
             productVM.Tags = await _context.Tags.ToListAsync();
             productVM.Colors = await _context.Color.ToListAsync();
             productVM.Sizes = await _context.Sizes.ToListAsync();
-           
-            
+
+
 
             if (!ModelState.IsValid)
             {
@@ -71,7 +72,7 @@ namespace ProniaProject.Areas.Admin.Controllers
 
             if (!productVM.MainPhoto.ValidateType("image/"))
             {
-                ModelState.AddModelError(nameof(productVM.MainPhoto),"Photo Type is invalid");
+                ModelState.AddModelError(nameof(productVM.MainPhoto), "Photo Type is invalid");
                 return View(productVM);
             }
 
@@ -92,6 +93,7 @@ namespace ProniaProject.Areas.Admin.Controllers
                 ModelState.AddModelError(nameof(productVM.HoverPhoto), "Photo size is invalid");
                 return View(productVM);
             }
+
 
 
             bool result = productVM.Categories.Any(c => c.Id == productVM.CategoryId);
@@ -143,7 +145,7 @@ namespace ProniaProject.Areas.Admin.Controllers
 
             ProductImage mainImage = new()
             {
-                Image = await productVM.MainPhoto.CreateFileAsync(_env.WebRootPath,"assets","images","website-images"),
+                Image = await productVM.MainPhoto.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images"),
                 IsPrime = true,
                 CreatedAt = DateTime.Now,
                 IsDeleted = false
@@ -169,7 +171,7 @@ namespace ProniaProject.Areas.Admin.Controllers
                 IsDeleted = false,
                 ProductTags = productVM.TagIds.Select(tId => new ProductTag { TagId = tId }).ToList(),
                 Images = new List<ProductImage> { mainImage, hoverImage },
-                
+
 
             };
 
@@ -183,8 +185,32 @@ namespace ProniaProject.Areas.Admin.Controllers
                 product.ProductSizes = productVM.SizeIds.Select(sId => new ProductSize { SizeId = sId }).ToList();
             }
 
+            string text = string.Empty;
+            foreach (IFormFile addPhoto in productVM.AdditionalPhotos)
+            {
+                if (!addPhoto.ValidateType("image/"))
+                {
+                    text += $"<div class=\"alert alert-warning\" role=\"alert\">\r\n  {addPhoto.FileName} is not valid type\r\n</div>";
+                    continue;
+                }
 
+                if (!addPhoto.ValidateSize(Utils.Enums.FileSize.Mb, 1))
+                {
+                    text += $"<div class=\"alert alert-warning\" role=\"alert\">\r\n  {addPhoto.FileName} is not valid size\r\n</div>";
+                    continue;
+                }
 
+                product.Images.Add(new ProductImage
+                {
+                    Image = await addPhoto.CreateFileAsync(_env.WebRootPath, "assets", "images", "website-images"),
+                    CreatedAt = DateTime.Now,
+                    IsDeleted = false,
+                    IsPrime = null
+
+                });
+               
+            }
+            TempData["FileWarning"] = text;
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
 
@@ -197,7 +223,7 @@ namespace ProniaProject.Areas.Admin.Controllers
         {
             if (id == null || id < 1) return BadRequest();
 
-            Product product = await _context.Products.Include(p => p.ProductTags).Include(p=>p.ColorProducts).ThenInclude(cp=>cp.Color).FirstOrDefaultAsync(p => p.Id == id);
+            Product product = await _context.Products.Include(p => p.ProductTags).Include(p => p.ColorProducts).ThenInclude(cp => cp.Color).FirstOrDefaultAsync(p => p.Id == id);
 
             if (product is null) return NotFound();
 
@@ -231,7 +257,7 @@ namespace ProniaProject.Areas.Admin.Controllers
                 return View(productVM);
             }
 
-            Product existed = await _context.Products.Include(p=>p.ProductTags).FirstOrDefaultAsync(p => p.Id == id);
+            Product existed = await _context.Products.Include(p => p.ProductTags).FirstOrDefaultAsync(p => p.Id == id);
 
             if (existed.CategoryId != productVM.CategoryId)
             {
@@ -282,6 +308,23 @@ namespace ProniaProject.Areas.Admin.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || id < 1) return BadRequest();
+
+            Product product = await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product == null) return NotFound();
+
+
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+
         }
     }
 }

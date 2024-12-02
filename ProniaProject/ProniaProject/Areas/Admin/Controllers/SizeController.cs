@@ -59,6 +59,55 @@ namespace ProniaProject.Areas.Admin.Controllers
 
         }
 
+        public async Task<IActionResult> Update(int? id)
+        {
+            if (id == null || id < 1) return BadRequest();
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            Size Size = await _context.Sizes.FirstOrDefaultAsync(s => s.Id == id);
+            if (Size is null) return NotFound();
+            UpdateSizeVM SizeVM = new UpdateSizeVM
+            {
+                Name = Size.Name
+            };
+            return View(SizeVM);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update(int? id, UpdateSizeVM SizeVM)
+        {
+            if (id == null || id < 1) return BadRequest();
+
+            if (!ModelState.IsValid)
+            {
+                return View();
+            }
+            Size Size = await _context.Sizes.FirstOrDefaultAsync(s => s.Id == id);
+            if (Size is null) return NotFound();
+            if (_context.Sizes.Any(s => s.Name == SizeVM.Name && s.Id != SizeVM.Id))
+            {
+                ModelState.AddModelError(nameof(UpdateSizeVM.Name), "Size must be unique");
+                return View(SizeVM);
+            }
+            Size.Name = SizeVM.Name;
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null || id < 1) return BadRequest();
+
+            Size Size = await _context.Sizes.FirstOrDefaultAsync(s => s.Id == id);
+
+            if (Size is null) return NotFound();
+            _context.Sizes.Remove(Size);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
 
     }
+
 }
+

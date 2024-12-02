@@ -11,6 +11,7 @@
 
                     <a asp-controller="product" asp-action="Create" class="btn btn-success">Create Product</a>
                 </h4>
+                <p>@Html.Raw(@TempData["FileWarning"])</p>
                 <div class="table-responsive">
                     <table class="table table-striped">
                         <thead>

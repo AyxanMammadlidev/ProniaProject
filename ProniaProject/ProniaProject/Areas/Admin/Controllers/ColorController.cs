@@ -8,7 +8,7 @@ using ProniaProject.Models;
 
 namespace ProniaApplication.Areas.Admin.Controllers
 {
-    [Area("Admin")]2
+    [Area("Admin")]
     public class ColorController : Controller
     {
         private readonly AppDbContext _context;
