@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProniaProject.DAL;
 
@@ -11,9 +12,11 @@ using ProniaProject.DAL;
 namespace ProniaProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241202142542_CreateSizeTable")]
+    partial class CreateSizeTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -335,12 +338,12 @@ namespace ProniaProject.Migrations
             modelBuilder.Entity("ProniaProject.Models.ProductSize", b =>
                 {
                     b.HasOne("ProniaProject.Models.Product", "Product")
-                        .WithMany("ProductSizes")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ProniaProject.Models.Size", "Size")
+                    b.HasOne("ProniaProject.Models.Size", "Tag")
                         .WithMany("ProductSizes")
                         .HasForeignKey("SizeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -348,7 +351,7 @@ namespace ProniaProject.Migrations
 
                     b.Navigation("Product");
 
-                    b.Navigation("Size");
+                    b.Navigation("Tag");
                 });
 
             modelBuilder.Entity("ProniaProject.Models.ProductTag", b =>
@@ -385,8 +388,6 @@ namespace ProniaProject.Migrations
                     b.Navigation("ColorProducts");
 
                     b.Navigation("Images");
-
-                    b.Navigation("ProductSizes");
 
                     b.Navigation("ProductTags");
                 });

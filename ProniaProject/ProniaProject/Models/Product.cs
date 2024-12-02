@@ -14,6 +14,7 @@
         public List<ProductTag> ProductTags { get; set; }
 
         public List<ColorProduct> ColorProducts { get; set; }
+        public List<ProductSize> ProductSizes { get; set; }
         
 
 

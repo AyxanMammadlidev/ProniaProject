@@ -56,7 +56,12 @@
                         </select>
                         <span asp-validation-for="ColorIds" class="text-danger"></span>
                     </div>
-
+                    <div class="form-group">
+                        <label asp-for="SizeIds">Size</label>
+                        <select multiple="multiple" asp-for="SizeIds" class="form-control" asp-items="@(new SelectList(Model.Sizes, nameof(Size.Id), nameof(Size.Name)))">
+                        </select>
+                        <span asp-validation-for="SizeIds" class="text-danger"></span>
+                    </div>
                     <button type="submit" class="btn btn-primary me-2">Submit</button>
                     <button type="button" class="btn btn-light">Cancel</button>
                 </form>

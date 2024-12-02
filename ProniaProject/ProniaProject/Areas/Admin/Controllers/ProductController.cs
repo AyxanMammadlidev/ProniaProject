@@ -21,7 +21,7 @@ namespace ProniaProject.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            List<GetProductAdminVM> productsVM = await _context.Products.Include(p => p.Category).Include(p => p.Images.Where(pi => pi.IsPrime == true)).
+            List<GetProductAdminVM> productsVM = await _context.Products.Include(p => p.Category).Include(p=>p.ColorProducts).ThenInclude(pi=>pi.Color).Include(p => p.Images.Where(pi => pi.IsPrime == true)).
                   Select(
                      p => new GetProductAdminVM
                      {
@@ -45,8 +45,8 @@ namespace ProniaProject.Areas.Admin.Controllers
             {
                 Tags = await _context.Tags.ToListAsync(),
                 Categories = await _context.Categories.ToListAsync(),
-                Colors = await _context.Color.ToListAsync()
-                
+                Colors = await _context.Color.ToListAsync(),
+                Sizes = await _context.Sizes.ToListAsync()
 
             };
 
@@ -60,6 +60,7 @@ namespace ProniaProject.Areas.Admin.Controllers
             productVM.Categories = await _context.Categories.ToListAsync();
             productVM.Tags = await _context.Tags.ToListAsync();
             productVM.Colors = await _context.Color.ToListAsync();
+            productVM.Sizes = await _context.Sizes.ToListAsync();
            
             
 
@@ -129,6 +130,16 @@ namespace ProniaProject.Areas.Admin.Controllers
                 }
             }
 
+            if (productVM.Sizes is not null)
+            {
+                bool sizeresult = productVM.SizeIds.Any(cId => !productVM.Sizes.Exists(c => c.Id == cId));
+
+                if (sizeresult)
+                {
+                    ModelState.AddModelError(nameof(CreateProductVM.SizeIds), "Sizes are wrong");
+                    return View(productVM);
+                }
+            }
 
             ProductImage mainImage = new()
             {
@@ -158,6 +169,7 @@ namespace ProniaProject.Areas.Admin.Controllers
                 IsDeleted = false,
                 ProductTags = productVM.TagIds.Select(tId => new ProductTag { TagId = tId }).ToList(),
                 Images = new List<ProductImage> { mainImage, hoverImage },
+                
 
             };
 
@@ -165,6 +177,13 @@ namespace ProniaProject.Areas.Admin.Controllers
             {
                 product.ColorProducts = productVM.ColorIds.Select(cId => new ColorProduct { ColorId = cId }).ToList();
             }
+
+            if (productVM.SizeIds is not null)
+            {
+                product.ProductSizes = productVM.SizeIds.Select(sId => new ProductSize { SizeId = sId }).ToList();
+            }
+
+
 
             await _context.Products.AddAsync(product);
             await _context.SaveChangesAsync();
