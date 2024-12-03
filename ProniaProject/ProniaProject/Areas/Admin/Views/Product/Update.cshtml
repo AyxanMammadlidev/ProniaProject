@@ -2,7 +2,7 @@
 @{
     ProductImage mainImg = Model.Images.FirstOrDefault(pi => pi.IsPrime == true);
     ProductImage hoverImg = Model.Images.FirstOrDefault(pi => pi.IsPrime == false);
-    ProductImage addImg = Model.Images.FirstOrDefault(pi => pi.IsPrime == null);
+    
 }
 <div class="row">
     <div class="col-12 grid-margin stretch-card">
@@ -30,7 +30,7 @@
                             @foreach(var item in Model.Images.Where(pi => pi.IsPrime == null).ToList())
                             {
                                 <div class="position-relative">
-                                    <img style="height:70px;width:70px" src="~/assets/images/website-images/@addImg?.Image" alt="Alternate Text" />
+                                    <img style="height:70px;width:70px" src="~/assets/images/website-images/@item?.Image" alt="Alternate Text" />
                                     <button type="button" class="text-danger cus-delete">X</button>
                                     <input asp-for="ImageIds" type="hidden" class="form-control" accept="image/*">
                                 </div>

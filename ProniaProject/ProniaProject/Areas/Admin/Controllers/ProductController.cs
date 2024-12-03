@@ -94,7 +94,7 @@ namespace ProniaProject.Areas.Admin.Controllers
                 return View(productVM);
             }
 
-
+           
 
             bool result = productVM.Categories.Any(c => c.Id == productVM.CategoryId);
 
@@ -253,16 +253,17 @@ namespace ProniaProject.Areas.Admin.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(int? id, UpdateProductVM productVM)
         {
+
+            Product existed = await _context.Products.Include(p => p.ProductTags).Include(p=>p.Images).FirstOrDefaultAsync(p => p.Id == id);
+
             productVM.Categories = await _context.Categories.ToListAsync();
             productVM.Tags = await _context.Tags.ToListAsync();
+            productVM.Images = existed.Images;
 
             if (!ModelState.IsValid)
             {
                 return View(productVM);
             }
-
-            Product existed = await _context.Products.Include(p => p.ProductTags).FirstOrDefaultAsync(p => p.Id == id);
-
             if (productVM.MainPhoto is not null)
             {
                 if (!productVM.MainPhoto.ValidateType("image/"))
@@ -294,6 +295,8 @@ namespace ProniaProject.Areas.Admin.Controllers
 
 
             }
+
+            
 
             if (existed.CategoryId != productVM.CategoryId)
             {
@@ -361,6 +364,16 @@ namespace ProniaProject.Areas.Admin.Controllers
                     IsPrime = false
                 });
             }
+            if(productVM.ImageIds is null)
+            {
+                productVM.ImageIds = new List<int>();
+            }
+
+            var deletedImages = existed.Images.Where(p => productVM.ImageIds.Exists(imgId=>imgId == p.Id && p.IsPrime==null)).ToList();
+
+            deletedImages.ForEach(p => p.Image.DeleteImage(_env.WebRootPath, "assets", "images", "website-images"));
+
+            _context.ProductImages.RemoveRange(deletedImages);
 
 
             existed.CategoryId = productVM.CategoryId.Value;
@@ -368,7 +381,7 @@ namespace ProniaProject.Areas.Admin.Controllers
             existed.Description = productVM.Description;
             existed.Name = productVM.Name;
             existed.SKU = productVM.SKU;
-
+            
             _context.Products.Update(existed);
             await _context.SaveChangesAsync();
 
