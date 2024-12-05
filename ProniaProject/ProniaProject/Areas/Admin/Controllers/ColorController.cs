@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProniaApplication.Areas.ViewModels;
 using ProniaProject.Areas.Admin.ViewModels;
@@ -9,6 +10,7 @@ using ProniaProject.Models;
 namespace ProniaApplication.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin,Moderator")]
     public class ColorController : Controller
     {
         private readonly AppDbContext _context;

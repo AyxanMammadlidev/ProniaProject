@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProniaProject.Areas.Admin.ViewModels;
@@ -9,6 +10,7 @@ using ProniaProject.Utils;
 namespace ProniaProject.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles ="Admin,Moderator")]
     public class ProductController : Controller
     {
         private readonly AppDbContext _context;
@@ -220,7 +222,7 @@ namespace ProniaProject.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        [Authorize(Roles ="Admin")]
 
         public async Task<IActionResult> Update(int? id)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProniaApplication.Areas.ViewModels;
 using ProniaProject.Areas.Admin.ViewModels;
@@ -8,6 +9,7 @@ using ProniaProject.Models;
 namespace ProniaProject.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin,Moderator")]
     public class ColorController : Controller
     {
         private readonly AppDbContext _context;
@@ -58,7 +60,7 @@ namespace ProniaProject.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
 
         }
-
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Update(int? id)
         {
             if (id == null || id < 1) return BadRequest();

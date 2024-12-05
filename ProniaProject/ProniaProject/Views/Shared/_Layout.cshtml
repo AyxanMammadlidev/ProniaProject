@@ -162,7 +162,7 @@
                                                 </li>
 
                                                 <li>
-                                                    <a class="dropdown-item" asp-action="login" asp-controller="account">Login</a>
+                                                    <a class="dropdown-item" asp-action="login" asp-controller="account" asp-route-returnUrl="@Context.Request.Path.Value">Login</a>
 
                                                 </li>
                        }
