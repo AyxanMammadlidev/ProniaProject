@@ -19,8 +19,8 @@ namespace ProniaProject.Conrollers
             HomeVM homeVM = new HomeVM
             {
                 Sliders = await _context.Slides.OrderBy(s=>s.Order).Take(2).ToListAsync(),
-                Products = await _context.Products.Include(p=>p.Images.Where(p=>p.IsPrime != null)).ToListAsync()
 
+                NewProducts = await _context.Products.OrderByDescending(p=>p.CreatedAt).Take(8).Include(p => p.Images.Where(p => p.IsPrime != null)).ToListAsync()
             };
 
           return View(homeVM);

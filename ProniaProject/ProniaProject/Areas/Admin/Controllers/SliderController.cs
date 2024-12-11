@@ -11,6 +11,7 @@ namespace ProniaProject.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Authorize(Roles = "Admin,Moderator")]
+    [AutoValidateAntiforgeryToken]
     public class SliderController : Controller
     {
         private readonly AppDbContext _context;
