@@ -10,7 +10,7 @@ using ProniaProject.Utils;
 namespace ProniaProject.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Admin,Moderator")]
+    //[Authorize(Roles = "Admin,Moderator")]
     [AutoValidateAntiforgeryToken]
     public class ProductController : Controller
     {
