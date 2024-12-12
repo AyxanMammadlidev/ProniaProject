@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using NuGet.ContentModel;
 using ProniaProject.DAL;
 using ProniaProject.Models;
 using ProniaProject.ViewModels;
@@ -24,20 +25,20 @@ namespace ProniaProject.Controllers
             string cookie = Request.Cookies["basket"];
             List<BasketItemVM> itemVM = new();
 
-            
+
             if (cookie is null) return View(itemVM);
 
-           
+
             cookieVM = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookie);
 
-            
+
             foreach (var item in cookieVM)
             {
                 Product product = await _context.Products
                     .Include(p => p.Images.Where(pi => pi.IsPrime == true))
                     .FirstOrDefaultAsync(p => p.Id == item.Id);
 
-                
+
                 if (product != null)
                 {
                     itemVM.Add(new BasketItemVM
@@ -52,7 +53,7 @@ namespace ProniaProject.Controllers
                 }
             }
 
-            
+
             return View(itemVM);
         }
 
@@ -60,29 +61,29 @@ namespace ProniaProject.Controllers
         {
             List<BasketCookieItemVM> basket;
 
-            
+
             if (id is null || id < 1) return BadRequest();
 
-            
+
             bool result = await _context.Products.AnyAsync(p => p.Id == id);
 
             if (!result) return NotFound();
 
-            
+
             string cookies = Request.Cookies["basket"];
             if (cookies is not null)
             {
                 basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
 
-                
+
                 BasketCookieItemVM existed = basket.FirstOrDefault(p => p.Id == id);
                 if (existed != null)
                 {
-                    existed.Count++; 
+                    existed.Count++;
                 }
                 else
                 {
-                    
+
                     basket.Add(new BasketCookieItemVM()
                     {
                         Id = id.Value,
@@ -92,7 +93,7 @@ namespace ProniaProject.Controllers
             }
             else
             {
-                
+
                 basket = new List<BasketCookieItemVM>
             {
                 new BasketCookieItemVM()
@@ -103,19 +104,57 @@ namespace ProniaProject.Controllers
             };
             }
 
-            
+
             string basketJson = JsonConvert.SerializeObject(basket);
             Response.Cookies.Append("basket", basketJson);
 
-            
-            return RedirectToAction("Index", "Home");
+
+            return RedirectToAction(nameof(Index), "Home");
         }
 
-        public ActionResult GetBasket()
+        public IActionResult GetBasket()
         {
             var basket = Request.Cookies["basket"];
             return Content(basket);
         }
-    }
 
+        public IActionResult RemoveItemFromBasket(int? id)
+        {
+            List<BasketCookieItemVM> basket;
+
+            string cookies = Request.Cookies["basket"];
+
+            basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
+
+            BasketCookieItemVM removeItem = basket.FirstOrDefault(p => p.Id == id);
+
+            basket.Remove(removeItem);
+
+            string updatedBasket = JsonConvert.SerializeObject(basket);
+
+            Response.Cookies.Append("basket", updatedBasket);
+
+            return RedirectToAction(nameof(Index), "Basket");
+
+        }
+
+        //public IActionResult IncreaseItemQuantity(int? id)
+        //{
+        //    List<BasketCookieItemVM> basket;
+
+        //    string cookies = Request.Cookies["basket"];
+
+        //    basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
+
+        //    if (basket is null) return RedirectToAction(nameof(Index));
+
+        //    BasketCookieItemVM item = basket.FirstOrDefault(i => i.Id == id);
+
+        //    item.Count++;
+
+        //    string updatedBasket = JsonConvert.SerializeObject(basket);
+
+        //    return RedirectToAction(nameof(Index));
+        //}
+    }
 }

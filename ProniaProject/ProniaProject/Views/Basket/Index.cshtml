@@ -44,7 +44,7 @@
 
                                         <tr>
                                             <td class="product_remove">
-                                                <a href="#">
+                                                <a asp-action="RemoveItemFromBasket" asp-route-id="@item.Id">
                                                     <i class="pe-7s-close"
                                                        data-tippy="Remove"
                                                        data-tippy-inertia="true"
@@ -75,7 +75,9 @@
                                                         <i class="fa fa-minus"></i>
                                                     </div>
                                                     <div class="inc qtybutton">
-                                                        <i class="fa fa-plus"></i>
+                                                        <i class="fa fa-plus">
+                                                           
+                                                        </i>
                                                     </div>
                                                 </div>
                                             </td>
