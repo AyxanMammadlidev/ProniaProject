@@ -1,10 +1,12 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using ProniaProject.DAL;
 using ProniaProject.Models;
 using ProniaProject.Services.Interfaces;
 using ProniaProject.ViewModels;
+using System.Security.Claims;
 
 namespace ProniaProject.Services.Implementations
 {
@@ -12,49 +14,81 @@ namespace ProniaProject.Services.Implementations
     {
         private readonly AppDbContext _context;
         private readonly IHttpContextAccessor _http;
+        
 
         public LayoutService(AppDbContext context, IHttpContextAccessor http)
         {
             _context = context;
             _http = http;
+            
         }
 
         public async Task<List<BasketItemVM>> GetBasketAsync()
         {
-            List<BasketCookieItemVM> cookieVM;
-            string cookie = _http.HttpContext.Request.Cookies["basket"];
             List<BasketItemVM> itemVM = new();
-
-
-            if (cookie is null) return itemVM;
-
-
-            cookieVM = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookie);
-
-
-            foreach (var item in cookieVM)
+            if (_http.HttpContext.User.Identity.IsAuthenticated)
             {
-                Product product = await _context.Products
-                    .Include(p => p.Images.Where(pi => pi.IsPrime == true))
-                    .FirstOrDefaultAsync(p => p.Id == item.Id);
+                itemVM = await _context.BasketItems.Where(bi => bi.AppUserId == _http.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier))
 
+               .Select(
 
-                if (product != null)
-                {
-                    itemVM.Add(new BasketItemVM
+                    bi => new BasketItemVM
                     {
-                        Id = product.Id,
-                        Name = product.Name,
-                        Image = product.Images[0].Image,
-                        Price = product.Price,
-                        Count = item.Count,
-                        SubTotal = item.Count * product.Price
-                    });
-                }
+                        Count = bi.Count,
+                        Image = bi.Product.Images.FirstOrDefault(pi => pi.IsPrime == true).Image,
+                        Name = bi.Product.Name,
+                        Price = bi.Product.Price,
+                        SubTotal = bi.Count * bi.Product.Price,
+                        Id = bi.Id
+
+                    }
+                    ).ToListAsync();
+
+
             }
 
+            else
+            {
 
-            return itemVM;
+                List<BasketCookieItemVM> cookieVM;
+                string cookie = _http.HttpContext.Request.Cookies["basket"];
+
+
+                if (cookie is null) return itemVM;
+
+
+                else
+                {
+
+                }
+                cookieVM = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookie);
+
+
+                foreach (var item in cookieVM)
+                {
+                    Product product = await _context.Products
+                        .Include(p => p.Images.Where(pi => pi.IsPrime == true))
+                        .FirstOrDefaultAsync(p => p.Id == item.Id);
+
+
+                    if (product != null)
+                    {
+                        itemVM.Add(new BasketItemVM
+                        {
+                            Id = product.Id,
+                            Name = product.Name,
+                            Image = product.Images[0].Image,
+                            Price = product.Price,
+                            Count = item.Count,
+                            SubTotal = item.Count * product.Price
+                        });
+                    }
+                }
+
+
+            }
+                return itemVM;
+
         }
 
         public async Task<Dictionary<string,string>> GetSettingAsync()
