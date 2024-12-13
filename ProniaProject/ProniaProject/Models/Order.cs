@@ -8,8 +8,5 @@
         public AppUser AppUser { get; set; }
         public List<OrderItem> Items { get; set; }
 
-        
-
-
     }
 }

@@ -72,12 +72,22 @@
                                                            value="@item.Count"
                                                            type="text" />
                                                     <div class="dec qtybutton">
-                                                        <i class="fa fa-minus"></i>
+                                                        <form asp-action="DecraseItemQuantity" asp-route-id="@item.Id" method="post">
+                                                            <button>
+                                                                <i class="fa fa-minus">
+
+                                                                </i>
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                     <div class="inc qtybutton">
-                                                        <i class="fa fa-plus">
-                                                           
-                                                        </i>
+                                                        <form asp-action="IncreaseItemQuantity" asp-route-id="@item.Id" method="post">
+                                                      <button>
+                                                            <i class="fa fa-plus">
+
+                                                            </i>
+                                                      </button>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </td>
