@@ -242,6 +242,10 @@ namespace ProniaProject.Controllers
             {
                 item.Count--;
             }
+            else
+            {
+                basket.Remove(item);
+            }
 
             string updatedBasket = JsonConvert.SerializeObject(basket);
 
