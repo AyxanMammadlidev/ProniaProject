@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProniaProject.DAL;
 
@@ -11,9 +12,11 @@ using ProniaProject.DAL;
 namespace ProniaProject.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241214184544_AddCCC")]
+    partial class AddCCC
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -324,41 +327,6 @@ namespace ProniaProject.Migrations
                     b.ToTable("ColorProducts");
                 });
 
-            modelBuilder.Entity("ProniaProject.Models.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Adress")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("AppUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool?>("Status")
-                        .HasColumnType("bit");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AppUserId");
-
-                    b.ToTable("Order");
-                });
-
             modelBuilder.Entity("ProniaProject.Models.OrderItem", b =>
                 {
                     b.Property<int>("Id")
@@ -374,9 +342,6 @@ namespace ProniaProject.Migrations
                     b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -386,8 +351,6 @@ namespace ProniaProject.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
-
-                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
@@ -704,17 +667,6 @@ namespace ProniaProject.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("ProniaProject.Models.Order", b =>
-                {
-                    b.HasOne("ProniaProject.Models.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
-                });
-
             modelBuilder.Entity("ProniaProject.Models.OrderItem", b =>
                 {
                     b.HasOne("ProniaProject.Models.AppUser", "AppUser")
@@ -722,10 +674,6 @@ namespace ProniaProject.Migrations
                         .HasForeignKey("AppUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ProniaProject.Models.Order", null)
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId");
 
                     b.HasOne("ProniaProject.Models.Product", "Product")
                         .WithMany()
@@ -811,11 +759,6 @@ namespace ProniaProject.Migrations
             modelBuilder.Entity("ProniaProject.Models.Color", b =>
                 {
                     b.Navigation("ProductColors");
-                });
-
-            modelBuilder.Entity("ProniaProject.Models.Order", b =>
-                {
-                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("ProniaProject.Models.Product", b =>

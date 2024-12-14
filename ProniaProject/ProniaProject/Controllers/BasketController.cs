@@ -371,14 +371,59 @@ namespace ProniaProject.Controllers
             return View(orderVM);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Checkout(OrderVM orderVM)
-        //{
-        //    var basketItems = await _context.BasketItems
-        //         .Where(bi => bi.AppUserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
-        //     .ToListAsync();
+        [HttpPost]
+        public async Task<IActionResult> Checkout(OrderVM orderVM)
+        {
+            var basketItems = await _context.BasketItems
+                 .Where(bi => bi.AppUserId == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                 .Include(bi=>bi.Product)
+             .ToListAsync();
+
+            if (!ModelState.IsValid)
+            {
+                orderVM.BasketOrderVMs = basketItems.Select(bi => new BasketOrderVM
+                {
+                    Count = bi.Count,
+                    Name = bi.Product.Name,
+                    Price = bi.Product.Price,
+                    SubTotal = bi.Product.Price * bi.Count
+                }).ToList();
+                return View(orderVM);
+            }
+
+            Order order = new()
+            {
+                Adress = orderVM.Adress,
+                Status = null,
+                AppUserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                CreatedAt = DateTime.Now,
+                IsDeleted = false,
+                Items = basketItems.Select(bi => new OrderItem
+                {
+                    AppUserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                    Count = bi.Count,
+                    Price = bi.Product.Price,
+                    ProductId = bi.Product.Id
+
+
+
+                }).ToList(),
+                TotalPrice = basketItems.Sum(bi=>bi.Product.Price * bi.Count)
+            };
+
+            await _context.Order.AddAsync(order);
+            _context.BasketItems.RemoveRange(basketItems);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index),"Home");
+
+
+
+
+
             
-        //    if (!ModelState.IsValid) return View(orderVM);
-        //}
+
+
+        }
     }
 }

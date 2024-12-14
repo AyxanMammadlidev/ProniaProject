@@ -22,7 +22,7 @@ namespace ProniaProject.DAL
         public DbSet<Setting> Settings { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
-
+        public DbSet<Order> Order {  get; set; }
 
 
     }

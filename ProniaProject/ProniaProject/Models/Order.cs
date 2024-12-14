@@ -8,6 +8,7 @@
         public string AppUserId { get; set; }
         public AppUser AppUser { get; set; }
         public List<OrderItem> Items { get; set; }
+        public bool? Status { get; set; }
 
     }
 }
