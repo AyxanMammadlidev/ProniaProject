@@ -2,6 +2,7 @@
 {
     public class Order : BaseEntity
     {
+        public string Adress { get; set; }
         public decimal TotalPrice { get; set; }
         //Relational
         public string AppUserId { get; set; }

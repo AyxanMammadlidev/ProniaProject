@@ -963,7 +963,7 @@
                             {
                                 total += item.SubTotal;
                                 <li class="minicart-product">
-                                    <a class="product-item_remove" >
+                                    <a asp-action="RemoveItemFromBasket" asp-route-id="@item.Id" class="product-item_remove">
                                         <i class="pe-7s-close"
                                            data-tippy="Remove"
                                            data-tippy-inertia="true"
