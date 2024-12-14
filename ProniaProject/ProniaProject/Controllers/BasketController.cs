@@ -170,86 +170,181 @@ namespace ProniaProject.Controllers
             return RedirectToAction(nameof(Index), "Home");
         }
 
+
+
         public IActionResult GetBasket()
         {
             var basket = Request.Cookies["basket"];
             return Content(basket);
         }
 
-        public IActionResult RemoveItemFromBasket(int? id)
+
+
+        public async Task<IActionResult> RemoveItemFromBasket(int? id)
         {
-           
-            List<BasketCookieItemVM> basket;
+            if(id is null || id<1) return BadRequest();
 
-            string cookies = Request.Cookies["basket"];
+            List<BasketCookieItemVM> basket = new();
 
-            if(cookies is null)  return BadRequest();
-
-            basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
-
-            if(basket is null) return BadRequest();
-
-            BasketCookieItemVM? removeItem = basket.FirstOrDefault(p => p.Id == id);
-
-            if(removeItem is null) return NotFound();
-
-            basket.Remove(removeItem);
-
-            string updatedBasket = JsonConvert.SerializeObject(basket);
-
-            Response.Cookies.Append("basket", updatedBasket);
-
-            return RedirectToAction(nameof(Index));
-
-        }
-
-        [HttpPost]
-        public IActionResult IncreaseItemQuantity(int? id)
-        {
-            List<BasketCookieItemVM>? basket;
-
-            string? cookies = Request.Cookies["basket"];
-
-            basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
-
-            if (basket is null) return RedirectToAction(nameof(Index));
-
-            BasketCookieItemVM? item = basket.FirstOrDefault(i => i.Id == id);
-
-            item.Count++;           
-
-            string? updatedBasket = JsonConvert.SerializeObject(basket);
-
-            Response.Cookies.Append("basket", updatedBasket);
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        public IActionResult DecraseItemQuantity(int? id)
-        {
-            List<BasketCookieItemVM> basket;
-
-            string cookies = Request.Cookies["basket"];
-
-            basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
-
-            if (basket is null) return RedirectToAction(nameof(Index));
-
-            BasketCookieItemVM item = basket.FirstOrDefault(i => i.Id == id);
-
-            if (item.Count > 1)
+            if (User.Identity.IsAuthenticated)
             {
-                item.Count--;
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                AppUser? user = await _userManager.Users
+                    .Include(u => u.BasketItems)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user is null) return NotFound(); 
+   
+                BasketItem? basketItem = user.BasketItems.FirstOrDefault(bi => bi.Id == id);
+
+                if (basketItem is null) return NotFound();
+               
+                user.BasketItems.Remove(basketItem);
+    
+                await _context.SaveChangesAsync();
+            }
+
+            else
+            {
+                string cookies = Request.Cookies["basket"];
+
+                if (cookies is null) return BadRequest();
+
+                basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
+
+                if (basket is null) return BadRequest();
+
+                BasketCookieItemVM? removeItem = basket.FirstOrDefault(p => p.Id == id);
+
+                if (removeItem is null) return NotFound();
+
+                basket.Remove(removeItem);
+
+                string updatedBasket = JsonConvert.SerializeObject(basket);
+
+                Response.Cookies.Append("basket", updatedBasket);
+            }
+
+            return RedirectToAction(nameof(Index));
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> IncreaseItemQuantity(int? id)
+        {
+            if (id is null || id<1) return BadRequest();
+
+            List<BasketCookieItemVM>? basket = new();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                AppUser? user = await _userManager.Users
+                    .Include(u => u.BasketItems)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user is null) return NotFound();
+
+                BasketItem? basketItem = user.BasketItems.FirstOrDefault(bi => bi.Id == id);
+
+                if (basketItem is not null)
+                {
+                    basketItem.Count++;
+                    await _context.SaveChangesAsync();
+                }
+
             }
             else
             {
-                basket.Remove(item);
+                string? cookies = Request.Cookies["basket"];
+
+                if (string.IsNullOrEmpty(cookies)) return RedirectToAction(nameof(Index));
+
+                basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
+
+                if (basket == null) return RedirectToAction(nameof(Index));
+
+                BasketCookieItemVM? item = basket.FirstOrDefault(i => i.Id == id);
+
+                if (item != null)
+                {
+                    item.Count++;
+
+                    string updatedBasket = JsonConvert.SerializeObject(basket);
+
+                    Response.Cookies.Append("basket", updatedBasket);
+                }
+                else
+                {
+                    return NotFound("Basket item not found in cookies.");
+                }
             }
 
-            string updatedBasket = JsonConvert.SerializeObject(basket);
+            return RedirectToAction(nameof(Index));
+        }
 
-            Response.Cookies.Append("basket", updatedBasket);
+
+        [HttpPost]
+        public async Task<IActionResult> DecraseItemQuantity(int? id)
+        {
+            if (id is null || id < 1) return BadRequest();
+
+            List<BasketCookieItemVM> basket = new();
+
+            if (User.Identity.IsAuthenticated)
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+                AppUser? user = await _userManager.Users
+                    .Include(u => u.BasketItems)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
+
+                if (user is null) return NotFound();
+
+                BasketItem? basketItem = user.BasketItems.FirstOrDefault(bi => bi.Id == id);
+
+                if (basketItem is null) return NotFound();
+
+                if(basketItem.Count > 1)
+                {
+                    basketItem.Count--;
+                    
+                }
+                else
+                {               
+                    user.BasketItems.Remove(basketItem);
+                }
+
+                await _context.SaveChangesAsync();
+
+
+            }
+
+            else
+            {
+                string cookies = Request.Cookies["basket"];
+
+                basket = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookies);
+
+                if (basket is null) return RedirectToAction(nameof(Index));
+
+                BasketCookieItemVM item = basket.FirstOrDefault(i => i.Id == id);
+
+                if (item.Count > 1)
+                {
+                    item.Count--;
+                }
+                else
+                {
+                    basket.Remove(item);
+                }
+
+                string updatedBasket = JsonConvert.SerializeObject(basket);
+
+                Response.Cookies.Append("basket", updatedBasket);
+            }
 
             return RedirectToAction(nameof(Index));
         }
