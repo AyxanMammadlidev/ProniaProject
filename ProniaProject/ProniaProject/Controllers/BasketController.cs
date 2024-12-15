@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using NuGet.ContentModel;
 using ProniaProject.DAL;
 using ProniaProject.Models;
+using ProniaProject.Services.Interfaces;
 using ProniaProject.ViewModels;
 using System.Security.Claims;
 
@@ -16,78 +17,19 @@ namespace ProniaProject.Controllers
     {
         private readonly AppDbContext _context;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IBasketService _basketService;
 
-        public BasketController(AppDbContext context, UserManager<AppUser> userManager)
+        public BasketController(AppDbContext context, IBasketService basketService, UserManager<AppUser> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _basketService = basketService;
         }
 
 
         public async Task<IActionResult> Index()
         {
-            List<BasketItemVM> itemVM = new();
-
-            if (User.Identity.IsAuthenticated)
-            {
-                    itemVM = await _userManager.Users
-                    .Include(u => u.BasketItems)
-                    .Where(u => u.Id == User
-                    .FindFirstValue(ClaimTypes.NameIdentifier))
-                    .SelectMany(u => u.BasketItems).Select(
-
-                    bi => new BasketItemVM
-                    {
-                        Count = bi.Count,
-                        Image = bi.Product.Images.FirstOrDefault(pi=>pi.IsPrime==true).Image,
-                        Name = bi.Product.Name,
-                        Price = bi.Product.Price,
-                        SubTotal = bi.Count * bi.Product.Price,
-                        Id = bi.Id
-
-                    }
-                    ).ToListAsync();
-                
-                    
-            }
-
-            else
-            {
-                string cookie = Request.Cookies["basket"];
-                
-                List<BasketCookieItemVM> cookieVM;
-
-                if (cookie is null) return View(itemVM);
-
-
-                cookieVM = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookie);
-
-
-                foreach (var item in cookieVM)
-                {
-                    Product? product = await _context.Products
-                        .Include(p => p.Images.Where(pi => pi.IsPrime == true))
-                        .FirstOrDefaultAsync(p => p.Id == item.Id);
-
-
-                    if (product != null)
-                    {
-                        itemVM.Add(new BasketItemVM
-                        {
-                            Id = product.Id,
-                            Name = product.Name,
-                            Image = product.Images[0].Image,
-                            Price = product.Price,
-                            Count = item.Count,
-                            SubTotal = item.Count * product.Price
-                        });
-                    }
-                }
-            }
-           
-
-
-            return View(itemVM);
+            return View(await _basketService.GetBasketAsync());
         }
 
 
@@ -171,7 +113,15 @@ namespace ProniaProject.Controllers
 
             }
 
-            return RedirectToAction(nameof(Index), "Home");
+            return RedirectToAction(nameof(GetBasket));
+            
+        }
+
+
+
+        public async Task<IActionResult> GetBasket()
+        {
+            return PartialView("BasketPartialView", await _basketService.GetBasketAsync());
         }
 
 

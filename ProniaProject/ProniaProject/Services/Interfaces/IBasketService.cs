@@ -2,8 +2,8 @@
 
 namespace ProniaProject.Services.Interfaces
 {
-    public interface ILayoutService
+    public interface IBasketService
     {
-        Task<Dictionary<string, string>> GetSettingAsync();
+        Task<List<BasketItemVM>> GetBasketAsync();
     }
 }
