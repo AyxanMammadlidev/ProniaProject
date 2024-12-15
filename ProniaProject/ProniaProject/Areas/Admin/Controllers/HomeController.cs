@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ProniaProject.DAL;
+using ProniaProject.Models;
 
 namespace ProniaProject.Areas.Admin.Controllers
 {
@@ -8,9 +12,19 @@ namespace ProniaProject.Areas.Admin.Controllers
     [AutoValidateAntiforgeryToken]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+
+        public readonly AppDbContext _context; 
+
+        public HomeController(AppDbContext context)
         {
-            return View();
+            _context = context;
+        }
+
+
+        public async Task<IActionResult> Index()
+        {
+            List<Order> orders = await _context.Order.ToListAsync();
+            return View(orders);
         }
     }
 }
