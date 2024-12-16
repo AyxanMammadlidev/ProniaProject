@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProniaProject.DAL;
 using ProniaProject.Models;
+using ProniaProject.Utils.Exceptions;
 using ProniaProject.ViewModels;
 
 namespace ProniaProject.Conrollers
@@ -20,14 +21,14 @@ namespace ProniaProject.Conrollers
 
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || id < 1) return BadRequest();
+            if (id == null || id < 1) throw new BadRequestException();
 
             Product? product = await _context.Products.
                 Include(p=>p.Images.OrderByDescending(pi=>pi.IsPrime)).Include(p=>p.ProductSizes).ThenInclude(ps=>ps.Size)
                 .Include(p=>p.Category).Include(p => p.ColorProducts).ThenInclude(p=>p.Color).Include(p=>p.ProductTags).
                 ThenInclude(pt=>pt.Tag).FirstOrDefaultAsync(p => p.Id == id);
 
-            if (product == null) return NotFound();
+            if (product == null) throw new NotFoundException();
 
             DetailVM detailVM = new DetailVM
             {

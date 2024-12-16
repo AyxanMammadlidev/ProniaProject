@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProniaProject.DAL;
+using ProniaProject.Middlewares;
 using ProniaProject.Models;
 using ProniaProject.Services.Implementations;
 using ProniaProject.Services.Interfaces;
@@ -28,6 +29,8 @@ var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseStaticFiles();
 

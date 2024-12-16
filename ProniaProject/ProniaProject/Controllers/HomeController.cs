@@ -15,6 +15,7 @@ namespace ProniaProject.Conrollers
 
         public async Task<IActionResult> Index()
         {
+            
 
             HomeVM homeVM = new HomeVM
             {
@@ -26,5 +27,9 @@ namespace ProniaProject.Conrollers
           return View(homeVM);
         }
 
+        public IActionResult Error(string errorMessage)
+        {
+            return View(model: errorMessage); 
+        }
     }
 }
