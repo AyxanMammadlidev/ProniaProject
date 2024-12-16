@@ -515,17 +515,29 @@
             e.preventDefault();
             let endPoint = this.getAttribute("href");
 
-            $.ajax({
-                type: "GET",
-                url: endPoint,
-                success: function (response) {
-                    alert("Mehsul elave olundu");
-                    console.log(response);
-                }
-            }).done(data => {
+            fetch(endPoint).then(response => response.text()).then(data => {
+
                 let cart = document.querySelector("#miniCart");
                 cart.innerHTML = data;
-            });
+                let basketCount = document.querySelector("#basket-count").value;
+                let quantities = document.querySelectorAll(".cus-quantity");
+                quantities.forEach(q => q.innerHTML = basketCount);
+                
+
+            })
+
+            // $.ajax({
+            //     type: "GET",
+            //     url: endPoint,
+            //     success: function (response) {
+            //         alert("Mehsul elave olundu");
+            //         console.log(response);
+            //     }
+            // }).done(data => {
+          
+
+
+            // });
         }));
    
 

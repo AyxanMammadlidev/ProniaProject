@@ -6,6 +6,7 @@ namespace ProniaProject.ViewModels
     {
         
         public string Adress { get; set; }
-        public List<BasketOrderVM> BasketOrderVMs { get; set; }
+        public List<BasketOrderVM>? BasketOrderVMs { get; set; }
+
     }
 }
