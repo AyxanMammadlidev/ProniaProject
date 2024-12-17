@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using ProniaProject.DAL;
 using ProniaProject.Models;
+using ProniaProject.Utils.Enums;
 using ProniaProject.Utils.Exceptions;
 using ProniaProject.ViewModels;
-
 namespace ProniaProject.Conrollers
 {
     public class ShopController : Controller
@@ -14,9 +15,44 @@ namespace ProniaProject.Conrollers
         {
             _context = context;
         }
-        public IActionResult Index()
+
+        
+        public async Task<IActionResult> Index(string? search, int? categoryId, int key=1)
         {
-            return View();
+            IQueryable<Product> query = _context.Products.Include(p=>p.Images.Where(pi=>pi.IsPrime!=null));
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(q => q.Name.ToLower().Contains(search.ToLower()));
+            }
+
+            if(categoryId != null && categoryId > 0)
+            {
+                query = query.Where(p => p.Id == categoryId);
+            }
+
+            switch (key)
+            {
+                case (int)SortType.Name:
+                    query = query.OrderBy(p => p.Name);
+                    break;
+                case (int)SortType.Price:
+                    query = query.OrderByDescending(p => p.Price);
+                    break;
+                case (int)SortType.Date:
+                    query = query.OrderByDescending(p => p.CreatedAt);
+                    break;
+            }
+
+            ShopVM shopVM = new ShopVM()
+            {
+                Products = query.ToList(),
+                Categories = await _context.Categories.Include(c=>c.Products).ToListAsync(),
+                SearchValue = search,
+                CategoryId = categoryId
+            };
+
+            return View(shopVM);
         }
 
         public async Task<IActionResult> Details(int? id)

@@ -63,26 +63,40 @@ namespace ProniaProject.Services.Implementations
                 }
                 cookieVM = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookie);
 
+                itemVM = await _context.Products.Where(p => cookieVM.Select(c => c.Id).Contains(p.Id)).Select(p => new BasketItemVM
+                {
+                          Id = p.Id,
+                          Name = p.Name,
+                          Image = p.Images[0].Image,
+                          Price = p.Price
+                         
+                }).ToListAsync();
 
+                itemVM.ForEach(bi =>
+                {
+                    bi.Count = cookieVM.FirstOrDefault(c => c.Id == bi.Id).Count;
+                    bi.SubTotal = bi.Count * bi.Count;
+
+                });
                 foreach (var item in cookieVM)
                 {
-                    Product product = await _context.Products
-                        .Include(p => p.Images.Where(pi => pi.IsPrime == true))
-                        .FirstOrDefaultAsync(p => p.Id == item.Id);
+                    
+                 
+                       
 
 
-                    if (product != null)
-                    {
-                        itemVM.Add(new BasketItemVM
-                        {
-                            Id = product.Id,
-                            Name = product.Name,
-                            Image = product.Images[0].Image,
-                            Price = product.Price,
-                            Count = item.Count,
-                            SubTotal = item.Count * product.Price
-                        });
-                    }
+                    //if (product != null)
+                    //{
+                    //    itemVM.Add(new BasketItemVM
+                    //    {
+                    //        Id = product.Id,
+                    //        Name = product.Name,
+                    //        Image = product.Images[0].Image,
+                    //        Price = product.Price,
+                    //        Count = item.Count,
+                    //        SubTotal = item.Count * product.Price
+                    //    });
+                    //}
                 }
 
 
