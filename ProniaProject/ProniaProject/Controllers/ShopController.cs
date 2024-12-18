@@ -17,7 +17,7 @@ namespace ProniaProject.Conrollers
         }
 
         
-        public async Task<IActionResult> Index(string? search, int? categoryId, int key=1)
+        public async Task<IActionResult> Index(string? search, int? categoryId, int key=1, int page = 1)
         {
             IQueryable<Product> query = _context.Products.Include(p=>p.Images.Where(pi=>pi.IsPrime!=null));
 
@@ -28,7 +28,7 @@ namespace ProniaProject.Conrollers
 
             if(categoryId != null && categoryId > 0)
             {
-                query = query.Where(p => p.Id == categoryId);
+                query = query.Where(p => p.CategoryId == categoryId);
             }
 
             switch (key)
@@ -44,12 +44,19 @@ namespace ProniaProject.Conrollers
                     break;
             }
 
+            int count = query.Count();
+            double totalPage = Math.Ceiling((double)count / 3);
+            query = query.Skip((page-1)*3).Take(3);
+
             ShopVM shopVM = new ShopVM()
             {
                 Products = query.ToList(),
                 Categories = await _context.Categories.Include(c=>c.Products).ToListAsync(),
                 SearchValue = search,
-                CategoryId = categoryId
+                CategoryId = categoryId,
+                Key = key,
+                TotalPage = totalPage,
+                CurrentPage = page
             };
 
             return View(shopVM);

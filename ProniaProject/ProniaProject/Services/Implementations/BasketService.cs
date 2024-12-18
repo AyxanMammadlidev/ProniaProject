@@ -63,7 +63,8 @@ namespace ProniaProject.Services.Implementations
                 }
                 cookieVM = JsonConvert.DeserializeObject<List<BasketCookieItemVM>>(cookie);
 
-                itemVM = await _context.Products.Where(p => cookieVM.Select(c => c.Id).Contains(p.Id)).Select(p => new BasketItemVM
+                itemVM = await _context.Products.Where(p => cookieVM
+                .Select(c => c.Id).Contains(p.Id)).Select(p => new BasketItemVM
                 {
                           Id = p.Id,
                           Name = p.Name,

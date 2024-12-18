@@ -25,7 +25,7 @@
                 <div class="col-xl-3 col-lg-4 order-2 order-lg-1 pt-5 pt-lg-0">
                     <div class="sidebar-area">
                         <div class="widgets-searchbox">
-                            <form asp-action="index" asp-route-categoryId="@Model.CategoryId" id="widgets-searchbox">
+                            <form asp-action="index" asp-route-categoryId="@Model.CategoryId" asp-route-key="@Model.Key" id="widgets-searchbox">
                                 <input class="input-field"
                                        type="text"
                                        placeholder="Search"
@@ -49,7 +49,7 @@
                                     @foreach(Category category in Model.Categories)
                                     {
                                         <li>
-                                            <a asp-action="index" asp-route-search="@Model.S">
+                                            <a asp-action="index" asp-route-categoryId="@category.Id" asp-route-search="@Model.SearchValue" asp-route-key="@Model.Key">
                                                 <i class="fa fa-chevron-right"></i>
                                                 @category.Name <span>(@category.Products.Count)</span>
                                             </a>
@@ -180,12 +180,20 @@
                                 </ul>
                             </li>
                             <li class="short">
-                                <form asp-action="index">
+                                <form asp-action="index" asp-route-categoryId="@Model.CategoryId" asp-route-search="@Model.SearchValue" asp-route-page="@Model.CurrentPage">
 
-                                <select onchange="this.form.submit()" class="nice-select">
+                                <select name="Key" onchange="this.form.submit()" class="nice-select">
                                     @foreach(var type in Enum.GetValues(typeof(SortType)))
                                     {
-                                        <option value=@((int)type)> Sort by @type.ToString()</option>
+                                            if(Model.Key == (int)type)
+                                            {
+                                                <option selected value=@((int)type)> Sort by @type.ToString()</option>
+                                            }
+                                            else
+                                            {
+                                            <option value=@((int)type)> Sort by @type.ToString()</option>
+                                                
+                                            }
                                        
                                     }
                                 </select>
@@ -195,7 +203,7 @@
                         </ul>
                     </div>
                     <div class="tab-content">
-                        <div class="tab-pane fade"
+                        <div class="tab-pane fade active"
                              id="grid-view"
                              role="tabpanel"
                              aria-labelledby="grid-view-tab">
@@ -275,7 +283,7 @@
 
                             </div>
                         </div>
-                        <div class="tab-pane fade show active"
+                        <div class="tab-pane fade show "
                              id="list-view"
                              role="tabpanel"
                              aria-labelledby="list-view-tab">
@@ -1198,15 +1206,14 @@
                     <div class="pagination-area">
                         <nav aria-label="Page navigation example">
                             <ul class="pagination justify-content-center">
-                                <li class="page-item active">
-                                    <a class="page-link" href="#">1</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">2</a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">3</a>
-                                </li>
+                                @for(int i = 1; i <= Model.TotalPage; i++)
+                                {
+                                    <li class="page-item @(Model.CurrentPage==i? "active disabled ":"")">
+                                        <a asp-action="index" asp-route-page="@i" class="page-link" >@i</a>
+                                    </li>
+                                }
+                               
+ 
                                 <li class="page-item">
                                     <a class="page-link" href="#" aria-label="Next">&raquo;</a>
                                 </li>
