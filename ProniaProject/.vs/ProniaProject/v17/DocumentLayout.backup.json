@@ -422,8 +422,7 @@
               "RelativeToolTip": "ProniaProject\\Controllers\\ShopController.cs",
               "ViewState": "AgIAACUAAAAAAAAAAAAcwDoAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-30T07:06:24.228Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-30T07:06:24.228Z"
             },
             {
               "$type": "Document",
@@ -459,8 +458,7 @@
               "RelativeToolTip": "ProniaProject\\Views\\Home\\Index.cshtml",
               "ViewState": "AgIAAGYAAAAAAAAAAAAAAAcAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-11-29T07:16:32.754Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T07:16:32.754Z"
             },
             {
               "$type": "Document",
@@ -472,8 +470,7 @@
               "RelativeToolTip": "ProniaProject\\DAL\\AppDbContext.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-28T06:29:13.776Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-28T06:29:13.776Z"
             },
             {
               "$type": "Document",
@@ -481,9 +478,9 @@
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\pc\\OneDrive\\Masa\u00FCst\u00FC\\ProniaProject\\ProniaProject\\ProniaProject\\Views\\Shop\\Index.cshtml",
               "RelativeDocumentMoniker": "ProniaProject\\Views\\Shop\\Index.cshtml",
-              "ToolTip": "C:\\Users\\pc\\OneDrive\\Masa\u00FCst\u00FC\\ProniaProject\\ProniaProject\\ProniaProject\\Views\\Shop\\Index.cshtml*",
-              "RelativeToolTip": "ProniaProject\\Views\\Shop\\Index.cshtml*",
-              "ViewState": "AgIAAK8EAAAAAAAAAAAAALsEAABkAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\pc\\OneDrive\\Masa\u00FCst\u00FC\\ProniaProject\\ProniaProject\\ProniaProject\\Views\\Shop\\Index.cshtml",
+              "RelativeToolTip": "ProniaProject\\Views\\Shop\\Index.cshtml",
+              "ViewState": "AgIAALAAAAAAAAAAAAAAALYAAACqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2024-12-01T07:33:48.343Z",
               "EditorCaption": ""
@@ -498,8 +495,7 @@
               "RelativeToolTip": "ProniaProject\\Views\\Shared\\_Layout.cshtml",
               "ViewState": "AgIAAM0DAAAAAAAAAAAAAEcCAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-12-03T19:22:57.755Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-03T19:22:57.755Z"
             },
             {
               "$type": "Document",
@@ -511,8 +507,7 @@
               "RelativeToolTip": "ProniaProject\\Views\\Shared\\BasketPartialView.cshtml",
               "ViewState": "AgIAABgAAAAAAAAAAAAAAEUAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2024-12-15T08:26:55.75Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-15T08:26:55.75Z"
             },
             {
               "$type": "Document",
